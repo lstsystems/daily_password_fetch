@@ -1,6 +1,6 @@
 {
   "name": "drupal/daily_password_fetch",
-  "type": "drupal-module-custom",
+  "type": "drupal-custom-module",
   "description": "Fetch daily password for user accounts from a remote server.",
   "keywords": ["Drupal", "daily_password_fetch"],
   "license": "GPL-2.0+",
