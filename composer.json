@@ -1,8 +1,8 @@
 {
-  "name": "drupal/daily_password_fetch",
+  "name": "lstsystems/daily_password_fetch",
   "type": "drupal-custom-module",
   "description": "Fetch daily password for user accounts from a remote server.",
-  "keywords": ["Drupal", "daily_password_fetch"],
+  "keywords": ["Drupal", "daily_password_fetch", "lstsystems"],
   "license": "GPL-2.0+",
   "homepage": "https://github.com/lstsystems/daily_password_fetch",
   "minimum-stability": "dev",
