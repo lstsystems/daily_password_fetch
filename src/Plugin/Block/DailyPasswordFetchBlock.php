@@ -64,7 +64,9 @@ class DailyPasswordFetchBlock extends BlockBase  implements ContainerFactoryPlug
   /**
    *  Fetch the data from the remote server.
    *  Using the URL and password property from the configuration.
+   *
    * @return null|string
+   * @throws \GuzzleHttp\Exception\GuzzleException
    */
   private function fetchData(): ?string
   {
@@ -72,21 +74,30 @@ class DailyPasswordFetchBlock extends BlockBase  implements ContainerFactoryPlug
       $url = $this->configData->getURL();
       $password_property = $this->configData->getPasswordProperty();
       $response = \Drupal::httpClient()->get($url);
-      $data = json_decode($response->getBody());
 
-      // Log the response temporarily
-      $this->logger->get('daily_password_fetch')->info('Response: ' . $response->getBody());
-      // serialize the password to a string
-      $this->logger->get('daily_password_fetch')->info('Fetched password: ' . $data->$password_property);
+      // Convert the response body to a string
+      $body = (string) $response->getBody();
 
+      // Remove any non-printable characters, including BOM
+      $cleaned_body = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $body);
 
-      return $data->$password_property;
+      // Decode the JSON response
+      $data = json_decode($cleaned_body);
+
+      // Check for JSON decode errors
+      if (json_last_error() !== JSON_ERROR_NONE) {
+        $this->logger->get('daily_password_fetch')->error('JSON Decode Error: ' . json_last_error_msg());
+        return NULL;
+      }
+
+      // Access the dynamic property using curly braces
+      return $data->{$password_property};
+
     } catch (\Exception $e) {
-      $this->logger->get('daily_password_fetch')->error($e);
+      $this->logger->get('daily_password_fetch')->error($e->getMessage());
       return NULL;
     }
   }
-
 
   /**
    * Build the output for the current request.
