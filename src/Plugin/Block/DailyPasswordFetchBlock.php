@@ -8,7 +8,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 
 /**
- * Provides a 'Hello' Block.
+ * Provides a 'DailyPasswordFetchBlock' Block.
  *
  * @Block(
  *   id = "block_daily_password_fetch",
@@ -66,7 +66,8 @@ class DailyPasswordFetchBlock extends BlockBase  implements ContainerFactoryPlug
    *  Using the URL and password property from the configuration.
    * @return null|string
    */
-  private function fetchData() {
+  private function fetchData(): ?string
+  {
     try {
       $url = $this->configData->getURL();
       $password_property = $this->configData->getPasswordProperty();
@@ -96,7 +97,9 @@ class DailyPasswordFetchBlock extends BlockBase  implements ContainerFactoryPlug
 
     // If no password is found, set a default message.
     if (!$password) {
+      $this->logger->get('daily_password_fetch')->error($password);
       $password = "Unable to fetch password";
+
     }
 
     return [
