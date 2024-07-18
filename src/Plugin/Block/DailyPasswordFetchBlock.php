@@ -73,6 +73,13 @@ class DailyPasswordFetchBlock extends BlockBase  implements ContainerFactoryPlug
       $password_property = $this->configData->getPasswordProperty();
       $response = \Drupal::httpClient()->get($url);
       $data = json_decode($response->getBody());
+
+      // Log the response temporarily
+      $this->logger->get('daily_password_fetch')->info('Response: ' . $response->getBody());
+      // serialize the password to a string
+      $this->logger->get('daily_password_fetch')->info('Fetched password: ' . $data->$password_property);
+
+
       return $data->$password_property;
     } catch (\Exception $e) {
       $this->logger->get('daily_password_fetch')->error($e);
@@ -97,7 +104,6 @@ class DailyPasswordFetchBlock extends BlockBase  implements ContainerFactoryPlug
 
     // If no password is found, set a default message.
     if (!$password) {
-      $this->logger->get('daily_password_fetch')->error($password);
       $password = "Unable to fetch password";
 
     }
